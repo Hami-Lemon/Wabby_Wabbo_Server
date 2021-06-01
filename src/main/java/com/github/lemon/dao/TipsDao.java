@@ -11,8 +11,6 @@ import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,7 +27,7 @@ public class TipsDao {
     }
 
     //插入数据（发帖）
-    public void insert(Tips tip) throws SQLException {
+    public void releaseTips(Tips tip) throws SQLException {
         runner.update("insert into Tips(date,type,starNum,content) values (?,?,?,?)",
                 tip.getDate(), tip.getType(), tip.getStarNum(), tip.getContent());
     }

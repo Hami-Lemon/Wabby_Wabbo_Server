@@ -15,7 +15,7 @@ public class TipsDaoTest {
     public void insert() throws SQLException {
         Tips tip = new Tips(0, LocalDateTime.now().toString(), "meimei",2220,"睡觉都ii哦啊是解耦i大家啊iOS京东i窘境扫i觉得i哦加哦i是的骄傲i是i偶氮基祭扫");
         TipsDao tipsDao = new TipsDao(source);
-        tipsDao.insert(tip);
+        tipsDao.releaseTips(tip);
     }
 
     @Test
