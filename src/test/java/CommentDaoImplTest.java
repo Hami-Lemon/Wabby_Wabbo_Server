@@ -1,5 +1,5 @@
-import com.github.lemon.dao.CommentDao;
-import com.github.lemon.example.Comments;
+import com.github.lemon.dao.impl.CommentDaoImpl;
+import com.github.lemon.pojo.CommentsEntity;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 import org.junit.Test;
 
@@ -9,23 +9,23 @@ import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class CommentDaoTest {
+public class CommentDaoImplTest {
     DataSource source = new ComboPooledDataSource();
-    CommentDao commentDao = new CommentDao(source);
+    CommentDaoImpl commentDaoImpl = new CommentDaoImpl(source);
 
     @Test
     public void insert() throws SQLException {
-        Comments comments = new Comments(0,"你帅到不行",122, LocalDateTime.now().toString(), 4, 1);
-        commentDao.releaseCom(comments);
+        CommentsEntity commentsEntity = new CommentsEntity(0,"你帅到不行",122, LocalDateTime.now().toString(), 4, 1);
+        commentDaoImpl.releaseCom(commentsEntity);
     }
 
     @Test
     public void lookComById() throws SQLException, ParseException {
-        List<Comments> list = commentDao.getCommentsById(1);
+        List<CommentsEntity> list = commentDaoImpl.getCommentsById(1);
     }
 
     @Test
     public void lookComByOrder() throws SQLException, ParseException {
-        List<Comments> list = commentDao.getTipsOrderByStar(1);
+        List<CommentsEntity> list = commentDaoImpl.getTipsOrderByStar(1);
     }
 }

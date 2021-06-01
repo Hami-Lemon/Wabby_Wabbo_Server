@@ -1,14 +1,36 @@
-package com.github.lemon.example;
+package com.github.lemon.pojo;
 
-public class Comments {
+/**
+ * 评论实体
+ * @author BeCai
+ */
+public class CommentsEntity {
+    /**
+     * 评论id,主键，自增长
+     */
     private int id;
+    /**
+     * 评论的具体内容，纯文本
+     */
     private String content;
+    /**
+     * 点赞数
+     */
     private int starNum;
+    /**
+     * 评论发布日期yyyy-MM-dd HH:mm:ss
+     */
     private String date;
+    /**
+     * 评论的楼层数，根据发布时间排序
+     */
     private int floor;
+    /**
+     * 该评论所属的帖子的id
+     */
     private int Tips_id;
 
-    public Comments(int id, String content, int starNum, String date, int floor, int tips_id) {
+    public CommentsEntity(int id, String content, int starNum, String date, int floor, int tips_id) {
         this.id = id;
         this.content = content;
         this.starNum = starNum;

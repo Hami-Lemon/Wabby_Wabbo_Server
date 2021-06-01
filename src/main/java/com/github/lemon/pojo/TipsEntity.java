@@ -1,13 +1,32 @@
-package com.github.lemon.example;
+package com.github.lemon.pojo;
 
-public class Tips {
+/**
+ * 帖子实体
+ * @author BeCai
+ */
+public class TipsEntity {
+    /**
+     * 帖子的id,主键，自增长
+     */
     private int id;
+    /**
+     * 发帖时间yyyy-MM-dd HH:mm:ss
+     */
     private String date;
+    /**
+     * 帖子的类型
+     */
     private String type;
+    /**
+     * 点赞数
+     */
     private int starNum;
+    /**
+     * 帖子的具体内容，纯文本
+     */
     private String content;
 
-    public Tips(int id, String date, String type, int starNum, String content) {
+    public TipsEntity(int id, String date, String type, int starNum, String content) {
         this.id = id;
         this.date = date;
         this.type = type;
