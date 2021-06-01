@@ -13,13 +13,13 @@
 
 | *id* | date |  type  | starNum | content |
 | :--: | :--: | :----: | :-----: | :-----: |
-| Int  | Date | String |   Int   | String  |
+| int  | datetime | varchar |   int   | varchar  |
 
 ### Comment表
 
 | *id* | content | starNum | date | floor | Tips_id |
 | :--: | :-----: | :-----: | :--: | :---: | :-----: |
-| Int  | String  |   Int   | Date |  Int  |   Int   |
+| int  | varchar  |   int   | Datetime |  int  |   int   |
 
 ## 后端接口
 
