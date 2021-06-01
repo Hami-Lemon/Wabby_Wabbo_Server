@@ -1,4 +1,4 @@
--- create database wabby;
+create database wabby;
 use wabby;
 create table Tips
 (

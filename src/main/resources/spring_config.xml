@@ -7,8 +7,8 @@
     <context:component-scan base-package="com.github.lemon"/>
     <context:annotation-config/>
     <mvc:annotation-driven/>
-    <bean id="DataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+    <!--数据库链接池，使用c3p0配置文件为c3p0-config.xml-->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
           destroy-method="close">
-
     </bean>
 </beans>
