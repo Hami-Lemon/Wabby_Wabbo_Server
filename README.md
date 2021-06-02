@@ -19,7 +19,7 @@
 
 | *id* | content | starNum | date | floor | Tips_id |
 | :--: | :-----: | :-----: | :--: | :---: | :-----: |
-| int  | varchar  |   int   | Datetime |  int  |   int   |
+| int  | varchar  |   int   | datetime |  int  |   int   |
 
 ## 后端接口
 
