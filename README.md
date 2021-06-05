@@ -13,15 +13,15 @@
 
 ### Tips表
 
-| *id* | date |  type  | starNum | content |
-| :--: | :--: | :----: | :-----: | :-----: |
-| int  | datetime | varchar |   int   | varchar  |
+|    id    |       date        |     type     |  starNum   |  content  |
+| :------: | :---------------: | :----------: | :--------: | :-------: |
+| int 主键 | datetime 发贴日期 | varchar 分类 | int 点赞数 | text 内容 |
 
 ### Comment表
 
-| *id* | content | starNum | date | Tips_id |
-| :--: | :-----: | :-----: | :--: | :-----: |
-| int  | varchar  |   int   | Datetime | int |
+|    id    |  content  |  starNum  |       date        |        tips_id        |
+| :------: | :-------: | :-------: | :---------------: | :-------------------: |
+| int 主键 | text 内容 | int点赞数 | datetime 发布日期 | int 所属帖子的id,外键 |
 
 ## 后端接口
 

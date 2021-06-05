@@ -2,7 +2,6 @@ package com.github.lemon.wabby.dao;
 
 import com.github.lemon.wabby.pojo.TipsEntity;
 import org.springframework.dao.DataAccessException;
-import org.springframework.lang.Nullable;
 
 import java.util.List;
 
