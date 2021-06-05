@@ -1,4 +1,4 @@
-package com.github.lemon.controller;
+package com.github.lemon.wabby.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

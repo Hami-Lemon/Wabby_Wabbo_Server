@@ -1,7 +1,12 @@
-package com.github.lemon.pojo;
+package com.github.lemon.wabby.pojo;
+
+import com.github.lemon.wabby.util.TimeFormatUtil;
+
+import java.time.LocalDateTime;
 
 /**
  * 帖子实体
+ *
  * @author BeCai
  */
 public class TipsEntity {
@@ -10,9 +15,9 @@ public class TipsEntity {
      */
     private int id;
     /**
-     * 发帖时间yyyy-MM-dd HH:mm:ss
+     * 发帖时间 yyyy-MM-dd HH:mm:ss
      */
-    private String date;
+    private LocalDateTime date;
     /**
      * 帖子的类型
      */
@@ -26,7 +31,10 @@ public class TipsEntity {
      */
     private String content;
 
-    public TipsEntity(int id, String date, String type, int starNum, String content) {
+    public TipsEntity() {
+    }
+
+    public TipsEntity(int id, LocalDateTime date, String type, int starNum, String content) {
         this.id = id;
         this.date = date;
         this.type = type;
@@ -42,11 +50,11 @@ public class TipsEntity {
         this.id = id;
     }
 
-    public String getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
@@ -72,5 +80,26 @@ public class TipsEntity {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    @Override
+    public String toString() {
+        return "TipsEntity{" +
+                "id=" + id +
+                ", date=" + TimeFormatUtil.format(date) +
+                ", type='" + type + '\'' +
+                ", starNum=" + starNum +
+                ", content='" + content + '\'' +
+                '}';
+    }
+
+    public String toJson() {
+        return "{\n" +
+                "    \"id\":\"" + id + "\",\n" +
+                "    \"date\":\"" + TimeFormatUtil.format(date) + "\",\n" +
+                "    \"type\":\"" + type + "\",\n" +
+                "    \"starNum\":" + starNum + ",\n" +
+                "    \"content\":\"" + content + "\"\n" +
+                "}";
     }
 }
