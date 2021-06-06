@@ -1,6 +1,8 @@
 package com.github.lemon.wabby.pojo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.github.lemon.wabby.util.TimeFormatUtil;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
@@ -25,6 +27,8 @@ public class CommentsEntity {
     /**
      * 评论发布日期yyyy-MM-dd HH:mm:ss
      */
+//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime date;
     /**
      * 该评论所属的帖子的id
