@@ -2,6 +2,8 @@ package com.github.lemon.wabby.dao.impl;
 
 import com.github.lemon.wabby.dao.ICommentDao;
 import com.github.lemon.wabby.pojo.CommentsEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -22,6 +24,7 @@ public class CommentsDaoImpl implements ICommentDao {
      * @see JdbcTemplate
      */
     private final JdbcTemplate template;
+    private final static Logger LOGGER = LoggerFactory.getLogger(CommentsDaoImpl.class);
     /**
      * 分页查询中，每页的容量
      */
@@ -29,6 +32,7 @@ public class CommentsDaoImpl implements ICommentDao {
 //    private final SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public CommentsDaoImpl(@Autowired JdbcTemplate template) {
+        LOGGER.debug("template is null? {}", template == null);
         //获取数据库操作对象
         this.template = template;
     }
@@ -36,11 +40,12 @@ public class CommentsDaoImpl implements ICommentDao {
     //插入数据（发评论）
     public void releaseCom(CommentsEntity commentsEntity) {
         String sql = "insert into Comments(content, starNum, date, tips_id) value (?,?,?,?) ";
-        template.update(sql,
+        int result = template.update(sql,
                 commentsEntity.getContent(),
                 commentsEntity.getStarNum(),
                 commentsEntity.getDate(),
                 commentsEntity.getTipsId());
+        LOGGER.info("release comments:{} args:{} affect line:{}", sql, commentsEntity, result);
     }
 
     //根据id获取评论
@@ -60,6 +65,8 @@ public class CommentsDaoImpl implements ICommentDao {
     public int getPageNum(int tipsId) {
         String sql = "select count(*) from Comments where tips_id = ? ";
         Integer commentsNum = template.queryForObject(sql, Integer.class, tipsId);
+        LOGGER.info("query commentsNum with {} args:{} num:{} pageSize:{}",
+                sql, tipsId, commentsNum, pageSize);
         if (commentsNum == null || commentsNum == 0) return 0;
         return (commentsNum + pageSize - 1) / pageSize;
     }
@@ -71,8 +78,10 @@ public class CommentsDaoImpl implements ICommentDao {
     }
 
     private List<CommentsEntity> getCommentsList(String sql, Object... args) {
-        return template.query(sql,
+        List<CommentsEntity> list = template.query(sql,
                 new BeanPropertyRowMapper<>(CommentsEntity.class),
                 args);
+        LOGGER.info("query commentsList {} args:{} result:{}", sql, args, list);
+        return list;
     }
 }

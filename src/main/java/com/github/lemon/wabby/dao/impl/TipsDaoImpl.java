@@ -2,6 +2,8 @@ package com.github.lemon.wabby.dao.impl;
 
 import com.github.lemon.wabby.dao.ITipsDao;
 import com.github.lemon.wabby.pojo.TipsEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -17,6 +19,7 @@ import java.util.List;
  */
 @Repository
 public class TipsDaoImpl implements ITipsDao {
+    private final static Logger LOGGER = LoggerFactory.getLogger(TipsDaoImpl.class);
     /**
      * 分页之后,每页的帖子数
      */
@@ -28,6 +31,7 @@ public class TipsDaoImpl implements ITipsDao {
 //    private final SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public TipsDaoImpl(@Autowired JdbcTemplate template) {
+        LOGGER.debug("template is null? {}", template == null);
         //获取数据库操作对象
         this.template = template;
     }
@@ -35,11 +39,12 @@ public class TipsDaoImpl implements ITipsDao {
     //插入数据（发帖）
     public void releaseTips(TipsEntity tip) {
         String sql = "insert into Tips(date,type,starNum,content) values(?,?,?,?) ";
-        template.update(sql,
+        int result = template.update(sql,
                 tip.getDate(),
                 tip.getType(),
                 tip.getStarNum(),
                 tip.getContent());
+        LOGGER.info("release tips {} args:[{}] affect line:{}", sql, tip, result);
     }
 
     @Override
@@ -61,6 +66,8 @@ public class TipsDaoImpl implements ITipsDao {
     public int getPageNum(String type) {
         String sql = "select count(*) from Tips where type = ? ";
         Integer tipsNum = template.queryForObject(sql, Integer.class, type);
+        LOGGER.info("query pageNum {} type:{} tipsNum:{} pageSize:{}",
+                sql, type, tipsNum, pageSize);
         if (tipsNum == null || tipsNum == 0) return 0;
         return (tipsNum + pageSize - 1) / pageSize;
     }
@@ -68,9 +75,11 @@ public class TipsDaoImpl implements ITipsDao {
     //根据id获取帖子
     public TipsEntity getTipsById(int id) {
         String sql = "select * from Tips where id = ? ";
-        return template.queryForObject(sql,
+        TipsEntity tips = template.queryForObject(sql,
                 new BeanPropertyRowMapper<>(TipsEntity.class),
                 id);
+        LOGGER.info("query tips by id {} id:{} tips:{}", sql, id, tips);
+        return tips;
     }
 
     //点赞数降序排列获取帖子（前10）
@@ -80,8 +89,10 @@ public class TipsDaoImpl implements ITipsDao {
     }
 
     private List<TipsEntity> getTipsList(String sql, Object... args) {
-        return template.query(sql,
+        List<TipsEntity> list = template.query(sql,
                 new BeanPropertyRowMapper<>(TipsEntity.class),
                 args);
+        LOGGER.info("query tipsList {}, args:{} result:{}",sql, args, list);
+        return list;
     }
 }

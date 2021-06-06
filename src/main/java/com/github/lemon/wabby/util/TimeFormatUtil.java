@@ -1,5 +1,8 @@
 package com.github.lemon.wabby.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -12,6 +15,7 @@ import java.time.format.DateTimeFormatter;
  * @version v1.0
  */
 public class TimeFormatUtil {
+    private final static Logger LOGGER = LoggerFactory.getLogger(TimeFormatUtil.class);
 
     private TimeFormatUtil() {
     }
@@ -35,6 +39,7 @@ public class TimeFormatUtil {
      */
     public static String format(LocalDateTime time, String format) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+        LOGGER.debug("format {} with pattern {}", time, format);
         return formatter.format(time);
     }
 

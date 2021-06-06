@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" ?>
 <c3p0-config>
     <!--默认配置-->
     <default-config>
