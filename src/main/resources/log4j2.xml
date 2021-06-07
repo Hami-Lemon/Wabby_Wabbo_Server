@@ -12,7 +12,7 @@
         <!--输出到控制台-->
         <Console name="Console" target="SYSTEM_OUT">
             <!--时间 [线程名] 日志级别 logger名称 > 输出信息\n-->
-            <PatternLayout pattern="%d{MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{12} > %msg%n"/>
+            <PatternLayout charset="UTF-8" pattern="%d{MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{12} > %msg%n"/>
         </Console>
         <!--输出info日志到${log.folder}/info.log-->
         <!--<RollingFile name="InfoRollingFile" fileName="${log.folder}/info.log"
@@ -35,9 +35,12 @@
         <!--不输出spring日志-->
         <!--        <Logger name="org.springframework" level="debug" additivity="false">-->
         <!--        </Logger>-->
-        <Root level="info">
+        <Logger name="com.mchange" level="debug" additivity="false">
+
+        </Logger>
+        <Root level="debug">
             <AppenderRef ref="Console"/>
-<!--            <AppenderRef ref="InfoRollingFile"/>-->
+            <!--            <AppenderRef ref="InfoRollingFile"/>-->
         </Root>
     </Loggers>
 </Configuration>

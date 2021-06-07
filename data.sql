@@ -37,7 +37,7 @@ values ('2000-01-01 01:20:22', '娱乐', '<p>按照本集内容，《POP SQUAD�
        ('2021-01-01 20:20:22', '知识', '测试内容塔顶ffasdflkasfl!ksdf!lksdjfa^lkdjfa^ldf*&*(fasdioi'),
        ('2021-01-01 21:20:22', '知识', '测试内容塔顶ffasdflkasfl!ksdf!lksdjfa^lkdjfa^ldf*&*(fasdioi');
 
-insert into comments(content, date, tips_id)
+insert into Comments(content, date, tips_id)
 values ('不错,还挺有意思。', '2010-01-01 11:13:14', 1),
        ('不错,还挺有意思。', '2010-01-01 12:13:14', 1),
        ('不错,还挺有意思。', '2010-01-01 13:13:14', 1),

@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.*;
 
 /**
  * 成功时code为200，失败时为500
+ *
  * @author Yui
  */
+@CrossOrigin(origins = "*",maxAge = 3600)
 @Controller
 public class CommentController {
 
@@ -20,34 +22,41 @@ public class CommentController {
 
     /**
      * 发布评论
+     *
      * @param comment 评论的json
      * @return code和msg的json
      */
-    @RequestMapping(value = "/postcomment",method = RequestMethod.POST)
-    public @ResponseBody Resp postComment(@RequestBody CommentsEntity comment){
+    @RequestMapping(value = "/postcomment", method = RequestMethod.POST)
+    public @ResponseBody
+    Resp postComment(@RequestBody CommentsEntity comment) {
         Resp resp = service.postComment(comment);
         return resp;
     }
 
     /**
      * 获取评论
-     * @param tid 所属帖子的id
+     *
+     * @param tid  所属帖子的id
      * @param page 页数
      * @return
      */
-    @RequestMapping(value = "/getcomment",method = RequestMethod.GET)
-    public @ResponseBody CommentsResp getComment(@RequestParam("tid") int tid,@RequestParam("page") int page){
+    @RequestMapping(value = "/getcomment", method = RequestMethod.GET)
+    public @ResponseBody
+    CommentsResp
+    getComment(@RequestParam("tid") int tid, @RequestParam("page") int page) {
         CommentsResp resp = service.getComment(tid, page);
         return resp;
     }
 
     /**
      * 获取热评
+     *
      * @param tid 是帖子的id
      * @return
      */
-    @RequestMapping(value = "/gethotcom",method = RequestMethod.GET)
-    public @ResponseBody CommentsResp getHotCom(@RequestParam("tid") int tid){
+    @RequestMapping(value = "/gethotcom", method = RequestMethod.GET)
+    public @ResponseBody
+    CommentsResp getHotCom(@RequestParam("tid") int tid) {
         CommentsResp resp = service.getHotCom(tid);
         return resp;
     }
