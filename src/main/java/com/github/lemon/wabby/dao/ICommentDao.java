@@ -1,6 +1,6 @@
 package com.github.lemon.wabby.dao;
 
-import com.github.lemon.wabby.pojo.CommentsEntity;
+import com.github.lemon.wabby.pojo.CommentsPo;
 import org.springframework.dao.DataAccessException;
 
 import java.util.List;
@@ -15,21 +15,10 @@ public interface ICommentDao {
     /**
      * 添加评论
      *
-     * @param commentsEntity 评论对象
+     * @param commentsPo 评论对象
      * @throws DataAccessException 失败时抛出异常
      */
-    void releaseCom(CommentsEntity commentsEntity);
-
-    /**
-     * 获取对应帖子下的评论
-     * 应使用分页查询的方式，即getCommentsByTipsId(int tipId, int page)方法
-     *
-     * @param tipId 帖子的id
-     * @return 对应的评论集合，可能为空集合
-     * @throws DataAccessException 失败时抛出异常
-     */
-    @Deprecated(forRemoval = true)
-    List<CommentsEntity> getCommentsByTipsId(int tipId);
+    void releaseCom(CommentsPo commentsPo);
 
     /**
      * 获取对应帖子下的评论
@@ -40,7 +29,7 @@ public interface ICommentDao {
      * @return 对应的评论集合，可能为空集合
      * @throws DataAccessException 失败时抛出异常
      */
-    List<CommentsEntity> getCommentsByTipsId(int tipId, int page);
+    List<CommentsPo> getCommentsByTipsId(int tipId, int page);
 
     /**
      * 获取对应评论下总共有多少页数据，每页最多10条数据
@@ -59,7 +48,7 @@ public interface ICommentDao {
      * @return 热评集合，可能为空集合
      * @throws DataAccessException 失败时抛出异常
      */
-    List<CommentsEntity> getHotComments(int tipId);
+    List<CommentsPo> getHotComments(int tipId);
 
 
 }

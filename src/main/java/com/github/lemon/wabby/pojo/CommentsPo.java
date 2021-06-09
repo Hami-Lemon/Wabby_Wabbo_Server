@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
  *
  * @author BeCai
  */
-public class CommentsEntity {
+public class CommentsPo {
     /**
      * 评论id,主键，自增长
      */
@@ -27,7 +27,6 @@ public class CommentsEntity {
     /**
      * 评论发布日期yyyy-MM-dd HH:mm:ss
      */
-//    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime date;
     /**
@@ -35,10 +34,10 @@ public class CommentsEntity {
      */
     private int tipsId;
 
-    public CommentsEntity() {
+    public CommentsPo() {
     }
 
-    public CommentsEntity(int id, String content, int starNum, LocalDateTime date, int tipsId) {
+    public CommentsPo(int id, String content, int starNum, LocalDateTime date, int tipsId) {
         this.id = id;
         this.content = content;
         this.starNum = starNum;
@@ -95,15 +94,5 @@ public class CommentsEntity {
                 ", date='" + TimeFormatUtil.format(date) + '\'' +
                 ", Tips_id=" + tipsId +
                 '}';
-    }
-
-    public String toJson() {
-        return "{\n" +
-                "    \"id\":\"" + id + "\",\n" +
-                "    \"content\":\"" + content + "\",\n" +
-                "    \"starNum\":" + starNum + ",\n" +
-                "    \"date\":\"" + TimeFormatUtil.format(date) + "\",\n" +
-                "    \"tipsId\":" + tipsId + "\n" +
-                "}";
     }
 }

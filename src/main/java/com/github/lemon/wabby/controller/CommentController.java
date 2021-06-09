@@ -1,36 +1,41 @@
 package com.github.lemon.wabby.controller;
 
-import com.github.lemon.wabby.pojo.CommentsEntity;
-import com.github.lemon.wabby.pojo.CommentsResp;
-import com.github.lemon.wabby.pojo.Resp;
+import com.github.lemon.wabby.pojo.CommentsPo;
+import com.github.lemon.wabby.pojo.dto.BaseDto;
 import com.github.lemon.wabby.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 成功时code为200，失败时为500
  *
  * @author Yui
  */
-@CrossOrigin(origins = "*",maxAge = 3600)
+@CrossOrigin(origins = "*", maxAge = 3600)
 @Controller
 public class CommentController {
 
+    private final CommentService service;
+
     @Autowired
-    private CommentService service;
+    public CommentController(CommentService service) {
+        this.service = service;
+    }
 
     /**
      * 发布评论
      *
-     * @param comment 评论的json
+     * @param comments 评论的json
      * @return code和msg的json
      */
-    @RequestMapping(value = "/postcomment", method = RequestMethod.POST)
+    @PostMapping(value = "/postcomments",
+            produces = "application/json;charset=UTF-8")
     public @ResponseBody
-    Resp postComment(@RequestBody CommentsEntity comment) {
-        Resp resp = service.postComment(comment);
-        return resp;
+    BaseDto<Void> postComment(@RequestBody CommentsPo comments) {
+        return service.postComment(comments);
     }
 
     /**
@@ -40,12 +45,12 @@ public class CommentController {
      * @param page 页数
      * @return
      */
-    @RequestMapping(value = "/getcomment", method = RequestMethod.GET)
+    @GetMapping(value = "/getcomments",
+            produces = "application/json;charset=UTF-8")
     public @ResponseBody
-    CommentsResp
-    getComment(@RequestParam("tid") int tid, @RequestParam("page") int page) {
-        CommentsResp resp = service.getComment(tid, page);
-        return resp;
+    BaseDto<List<CommentsPo>>
+    getComments(@RequestParam("tid") int tid, @RequestParam("page") int page) {
+        return service.getComment(tid, page);
     }
 
     /**
@@ -54,10 +59,10 @@ public class CommentController {
      * @param tid 是帖子的id
      * @return
      */
-    @RequestMapping(value = "/gethotcom", method = RequestMethod.GET)
+    @GetMapping(value = "/gethotcomments",
+            produces = "application/json;charset=UTF-8")
     public @ResponseBody
-    CommentsResp getHotCom(@RequestParam("tid") int tid) {
-        CommentsResp resp = service.getHotCom(tid);
-        return resp;
+    BaseDto<List<CommentsPo>> getHotCom(@RequestParam("tid") int tid) {
+        return service.getHotCom(tid);
     }
 }

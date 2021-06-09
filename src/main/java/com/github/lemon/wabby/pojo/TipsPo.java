@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
  *
  * @author BeCai
  */
-public class TipsEntity {
+public class TipsPo {
     /**
      * 帖子的id,主键，自增长
      */
@@ -33,10 +33,10 @@ public class TipsEntity {
      */
     private String content;
 
-    public TipsEntity() {
+    public TipsPo() {
     }
 
-    public TipsEntity(int id, LocalDateTime date, String type, int starNum, String content) {
+    public TipsPo(int id, LocalDateTime date, String type, int starNum, String content) {
         this.id = id;
         this.date = date;
         this.type = type;

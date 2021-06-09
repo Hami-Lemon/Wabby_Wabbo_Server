@@ -1,7 +1,7 @@
 package com.github.lemon.wabby.dao.impl;
 
 import com.github.lemon.wabby.dao.ITipsDao;
-import com.github.lemon.wabby.pojo.TipsEntity;
+import com.github.lemon.wabby.pojo.TipsPo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +9,6 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -37,7 +35,7 @@ public class TipsDaoImpl implements ITipsDao {
     }
 
     //插入数据（发帖）
-    public void releaseTips(TipsEntity tip) {
+    public void releaseTips(TipsPo tip) {
         String sql = "insert into Tips(date,type,starNum,content) values(?,?,?,?) ";
         int result = template.update(sql,
                 tip.getDate(),
@@ -47,15 +45,9 @@ public class TipsDaoImpl implements ITipsDao {
         LOGGER.info("release tips {} args:[{}] affect line:{}", sql, tip, result);
     }
 
-    @Override
-    @Deprecated(forRemoval = true)
-    public List<TipsEntity> getTisByType(String type) {
-        return getTipsByType(type, 1);
-    }
-
     //根据类型获取帖子
     @Override
-    public List<TipsEntity> getTipsByType(String type, int page) {
+    public List<TipsPo> getTipsByType(String type, int page) {
         //调用定义好的存储过程
         String sql = "call query_tips_by_type_with_page(?,?,?)";
         return getTipsList(sql, type, page, pageSize);
@@ -73,24 +65,24 @@ public class TipsDaoImpl implements ITipsDao {
     }
 
     //根据id获取帖子
-    public TipsEntity getTipsById(int id) {
+    public TipsPo getTipsById(int id) {
         String sql = "select * from Tips where id = ? ";
-        TipsEntity tips = template.queryForObject(sql,
-                new BeanPropertyRowMapper<>(TipsEntity.class),
+        TipsPo tips = template.queryForObject(sql,
+                new BeanPropertyRowMapper<>(TipsPo.class),
                 id);
         LOGGER.info("query tips by id {} id:{} tips:{}", sql, id, tips);
         return tips;
     }
 
     //点赞数降序排列获取帖子（前10）
-    public List<TipsEntity> getHotTips() {
+    public List<TipsPo> getHotTips() {
         String sql = "select * from Tips order by starNum desc limit 10";
         return getTipsList(sql);
     }
 
-    private List<TipsEntity> getTipsList(String sql, Object... args) {
-        List<TipsEntity> list = template.query(sql,
-                new BeanPropertyRowMapper<>(TipsEntity.class),
+    private List<TipsPo> getTipsList(String sql, Object... args) {
+        List<TipsPo> list = template.query(sql,
+                new BeanPropertyRowMapper<>(TipsPo.class),
                 args);
         LOGGER.info("query tipsList {}, args:{} result:{}",sql, args, list);
         return list;

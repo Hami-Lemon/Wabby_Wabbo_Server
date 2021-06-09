@@ -1,7 +1,7 @@
 package com.github.lemon.wabby.dao.impl;
 
 import com.github.lemon.wabby.dao.ICommentDao;
-import com.github.lemon.wabby.pojo.CommentsEntity;
+import com.github.lemon.wabby.pojo.CommentsPo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,6 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -38,23 +37,19 @@ public class CommentsDaoImpl implements ICommentDao {
     }
 
     //插入数据（发评论）
-    public void releaseCom(CommentsEntity commentsEntity) {
+    public void releaseCom(CommentsPo commentsPo) {
         String sql = "insert into Comments(content, starNum, date, tips_id) value (?,?,?,?) ";
+        LOGGER.info("release comments:{} args:{}", sql, commentsPo);
         int result = template.update(sql,
-                commentsEntity.getContent(),
-                commentsEntity.getStarNum(),
-                commentsEntity.getDate(),
-                commentsEntity.getTipsId());
-        LOGGER.info("release comments:{} args:{} affect line:{}", sql, commentsEntity, result);
-    }
-
-    //根据id获取评论
-    public List<CommentsEntity> getCommentsByTipsId(int TipId) {
-        return getCommentsByTipsId(TipId, 1);
+                commentsPo.getContent(),
+                commentsPo.getStarNum(),
+                commentsPo.getDate(),
+                commentsPo.getTipsId());
+        LOGGER.info("result:{}",result);
     }
 
     @Override
-    public List<CommentsEntity> getCommentsByTipsId(int tipId, int page) {
+    public List<CommentsPo> getCommentsByTipsId(int tipId, int page) {
         //调用定义好的存储过程
         //language=MySQL
         String sql = "call query_comments_by_type_with_page(?, ?, ? )";
@@ -72,14 +67,14 @@ public class CommentsDaoImpl implements ICommentDao {
     }
 
     //获取当前帖子的热评（点赞数前3）
-    public List<CommentsEntity> getHotComments(int tipsId) {
+    public List<CommentsPo> getHotComments(int tipsId) {
         String sql = "select * from Comments where tips_id = ? order by starNum desc limit 3 ";
         return getCommentsList(sql, tipsId);
     }
 
-    private List<CommentsEntity> getCommentsList(String sql, Object... args) {
-        List<CommentsEntity> list = template.query(sql,
-                new BeanPropertyRowMapper<>(CommentsEntity.class),
+    private List<CommentsPo> getCommentsList(String sql, Object... args) {
+        List<CommentsPo> list = template.query(sql,
+                new BeanPropertyRowMapper<>(CommentsPo.class),
                 args);
         LOGGER.info("query commentsList {} args:{} result:{}", sql, args, list);
         return list;

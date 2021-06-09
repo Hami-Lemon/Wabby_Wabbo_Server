@@ -1,10 +1,13 @@
 package com.github.lemon.wabby.service;
 
 import com.github.lemon.wabby.dao.ICommentDao;
-import com.github.lemon.wabby.pojo.CommentsEntity;
-import com.github.lemon.wabby.pojo.CommentsResp;
-import com.github.lemon.wabby.pojo.Resp;
+import com.github.lemon.wabby.enums.StatusCode;
+import com.github.lemon.wabby.pojo.CommentsPo;
+import com.github.lemon.wabby.pojo.dto.BaseDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,47 +18,59 @@ import java.util.List;
 @Service
 public class CommentService {
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(CommentService.class);
+    private final ICommentDao dao;
+
     @Autowired
-    private ICommentDao dao;
-
-    public Resp postComment(CommentsEntity comment){
-        Resp resp = new Resp();
-        try {
-            dao.releaseCom(comment);
-            resp.setCode(200);
-            resp.setMsg("成功");
-        } catch (Exception e) {
-            resp.setCode(500);
-            resp.setMsg("发布失败");
-        }
-        return resp;
+    public CommentService(ICommentDao dao) {
+        this.dao = dao;
     }
 
-    public CommentsResp getComment(int tid,int page){
-        CommentsResp resp = new CommentsResp();
-        try {
-            List<CommentsEntity> comments = dao.getCommentsByTipsId(tid, page);
-            resp.setCode(200);
-            resp.setMsg("成功");
-            resp.setData(comments);
-        } catch (Exception e) {
-            resp.setCode(500);
-            resp.setMsg("失败");
+
+    public BaseDto<Void> postComment(CommentsPo comments) {
+        BaseDto<Void> dto = new BaseDto<>();
+        try{
+            dao.releaseCom(comments);
+            dto.setCode(StatusCode.OK);
+            dto.setMsg("OK");
+        }catch (DataAccessException e){
+            dto.setCode(StatusCode.DB_ERROR);
+            dto.setMsg("服务端异常，发布失败！");
         }
-        return resp;
+        return dto;
     }
 
-    public CommentsResp getHotCom(int tid){
-        CommentsResp resp = new CommentsResp();
-        try {
-            List<CommentsEntity> comments = dao.getHotComments(tid);
-            resp.setCode(200);
-            resp.setMsg("成功");
-            resp.setData(comments);
-        } catch (Exception e) {
-            resp.setCode(500);
-            resp.setMsg("失败");
+    public BaseDto<List<CommentsPo>> getComment(int tid, int page) {
+        BaseDto<List<CommentsPo>> dto = new BaseDto<>();
+        try{
+            final List<CommentsPo> comments = dao.getCommentsByTipsId(tid, page);
+            dto.setCode(StatusCode.OK);
+            dto.setMsg("OK");
+            dto.setData(comments);
+            if(comments.isEmpty()){
+                dto.setMsg("获取到空数据");
+            }
+        }catch (DataAccessException e){
+            dto.setCode(StatusCode.DB_ERROR);
+            dto.setMsg("服务端异常，发布失败！");
         }
-        return resp;
+        return dto;
+    }
+
+    public BaseDto<List<CommentsPo>> getHotCom(int tid) {
+        BaseDto<List<CommentsPo>> dto = new BaseDto<>();
+        try{
+            final List<CommentsPo> hotComments = dao.getHotComments(tid);
+            dto.setCode(StatusCode.OK);
+            dto.setMsg("OK");
+            dto.setData(hotComments);
+            if(hotComments.isEmpty()){
+                dto.setMsg("获取到空数据");
+            }
+        }catch (DataAccessException e){
+            dto.setCode(StatusCode.DB_ERROR);
+            dto.setMsg("服务端异常，发布失败！");
+        }
+        return dto;
     }
 }

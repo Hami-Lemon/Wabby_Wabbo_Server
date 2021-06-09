@@ -1,6 +1,6 @@
 package com.github.lemon.wabby.dao;
 
-import com.github.lemon.wabby.pojo.TipsEntity;
+import com.github.lemon.wabby.pojo.TipsPo;
 import org.springframework.dao.DataAccessException;
 
 import java.util.List;
@@ -18,19 +18,7 @@ public interface ITipsDao {
      * @param tip tip对象
      * @throws DataAccessException 失败时抛出异常
      */
-    void releaseTips(TipsEntity tip);
-
-    /**
-     * 根据type查询对应的帖子，结果可能为空集合
-     * <p>
-     * 应使用getTipsByType(String type,int page)方法
-     *
-     * @param type 帖子类型
-     * @return 查询到的帖子集合，可能为空集合
-     * @throws DataAccessException 失败时抛出异常
-     */
-    @Deprecated(forRemoval = true)
-    List<TipsEntity> getTisByType(String type);
+    void releaseTips(TipsPo tip);
 
     /**
      * 根据type查询对应的帖子，结果可能为空集合
@@ -42,7 +30,7 @@ public interface ITipsDao {
      * @return 查询到的帖子集合，可能为空集合
      * @throws DataAccessException 失败时抛出异常
      */
-    List<TipsEntity> getTipsByType(String type, int page);
+    List<TipsPo> getTipsByType(String type, int page);
 
     /**
      * 获取对应分类下总共有多少页数据，每页最多10条数据
@@ -61,7 +49,7 @@ public interface ITipsDao {
      * @return 查询到的帖子，不会为null,未查询到时会抛出异常
      * @throws DataAccessException 未查询到对应的id或其它失败情况时抛出异常
      */
-    TipsEntity getTipsById(int id);
+    TipsPo getTipsById(int id);
 
     /**
      * 根据点赞数获取前10的帖子（热贴）
@@ -72,5 +60,5 @@ public interface ITipsDao {
      * @throws DataAccessException 失败时抛出异常
      */
 //    List<TipsEntity> getTipsOrderByStar();
-    List<TipsEntity> getHotTips();
+    List<TipsPo> getHotTips();
 }

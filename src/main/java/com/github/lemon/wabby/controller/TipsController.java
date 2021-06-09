@@ -1,19 +1,20 @@
 package com.github.lemon.wabby.controller;
 
-import com.github.lemon.wabby.pojo.Resp;
-import com.github.lemon.wabby.pojo.TipsEntity;
-import com.github.lemon.wabby.pojo.TipsResp;
+import com.github.lemon.wabby.pojo.TipsPo;
+import com.github.lemon.wabby.pojo.dto.BaseDto;
 import com.github.lemon.wabby.service.TipsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 成功时code为200，失败时为500
  *
  * @author Yui
  */
-@CrossOrigin(origins = "*",maxAge = 3600)
+@CrossOrigin(origins = "*", maxAge = 3600)
 @Controller
 public class TipsController {
 
@@ -27,14 +28,15 @@ public class TipsController {
     /**
      * 发布帖子
      *
-     * @param tip
+     * @param tip 客户端传来的帖子数据
      * @return 带有code和msg的json
      */
-    @RequestMapping(value = "/posttips", method = RequestMethod.POST)
+    @PostMapping(value = "/posttips",
+            produces = "application/json;charset=UTF-8")
     public @ResponseBody
-    Resp postTips(@RequestBody TipsEntity tip) {
-        Resp resp = service.postTips(tip);
-        return resp;
+    BaseDto<Void> postTips(@RequestBody TipsPo tip) {
+        final BaseDto<Void> dto = service.postTips(tip);
+        return dto;
     }
 
     /**
@@ -44,11 +46,12 @@ public class TipsController {
      * @param page 页数
      * @return 带有code、msg和Tips对象集合的json
      */
-    @RequestMapping(value = "/gettips", method = RequestMethod.GET)
+    @GetMapping(value = "/gettips",
+            produces = "application/json;charset=UTF-8")
     public @ResponseBody
-    TipsResp getTips(@RequestParam("type") String type, @RequestParam("page") int page) {
-        TipsResp resp = service.getTips(type, page);
-        return resp;
+    BaseDto<List<TipsPo>>
+    getTips(@RequestParam("type") String type, @RequestParam("page") int page) {
+        return service.getTips(type,page);
     }
 
     /**
@@ -57,11 +60,11 @@ public class TipsController {
      * @param id 帖子id
      * @return 带有code、msg和只有一个Tips对象或null集合的json
      */
-    @RequestMapping(value = "/getdetail", method = RequestMethod.GET)
+    @GetMapping(value = "/getdetail",
+            produces = "application/json;charset=UTF-8")
     public @ResponseBody
-    TipsResp getTipsById(@RequestParam("id") int id) {
-        TipsResp resp = service.getTipsById(id);
-        return resp;
+    BaseDto<TipsPo> getTipsById(@RequestParam("id") int id) {
+        return service.getTipsById(id);
     }
 
     /**
@@ -69,10 +72,10 @@ public class TipsController {
      *
      * @return
      */
-    @RequestMapping(value = "/gethottips", method = RequestMethod.GET)
+    @GetMapping(value = "/gethottips",
+            produces = "application/json;charset=UTF-8")
     public @ResponseBody
-    TipsResp getHotTips() {
-        TipsResp resp = service.getHotTips();
-        return resp;
+    BaseDto<List<TipsPo>> getHotTips() {
+        return service.getHotTips();
     }
 }

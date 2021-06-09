@@ -1,13 +1,13 @@
 package com.github.lemon.wabby.service;
 
 import com.github.lemon.wabby.dao.ITipsDao;
-import com.github.lemon.wabby.pojo.Resp;
-import com.github.lemon.wabby.pojo.TipsEntity;
-import com.github.lemon.wabby.pojo.TipsResp;
+import com.github.lemon.wabby.enums.StatusCode;
+import com.github.lemon.wabby.pojo.TipsPo;
+import com.github.lemon.wabby.pojo.dto.BaseDto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,75 +16,76 @@ import java.util.List;
 @Service
 public class TipsService {
 
-    @Autowired
-    private ITipsDao dao;
+    private final ITipsDao dao;
 
-    public Resp postTips(TipsEntity tip){
-        Resp resp = new Resp();
+    @Autowired
+    public TipsService(ITipsDao dao) {
+        this.dao = dao;
+    }
+
+    public BaseDto<Void> postTips(TipsPo tip) {
+        BaseDto<Void> dto = new BaseDto<>();
         try {
             dao.releaseTips(tip);
-            resp.setCode(200);
-            resp.setMsg("成功");
-        } catch (Exception e) {
-            resp.setCode(500);
-            resp.setMsg("发布失败");
+            dto.setCode(StatusCode.OK);
+            dto.setMsg("OK");
+        } catch (DataAccessException e) {
+            dto.setCode(StatusCode.DB_ERROR);
+            dto.setMsg("服务端异常，发布失败！");
         }
-        return resp;
+        return dto;
     }
 
-    public TipsResp getTips(String type,int page){
-        TipsResp resp = new TipsResp();
-        List<TipsEntity> tips = null;
+    public BaseDto<List<TipsPo>> getTips(String type, int page) {
+        BaseDto<List<TipsPo>> dto = new BaseDto<>();
+        List<TipsPo> tips;
         try {
             tips = dao.getTipsByType(type, page);
-        } catch (Exception e) {
-            resp.setCode(500);
-            resp.setMsg("获取失败");
+            dto.setCode(StatusCode.OK);
+            dto.setMsg("OK");
+            dto.setData(tips);
+            if (tips.isEmpty()) {
+                dto.setMsg("该分类下暂时没有相关的帖子信息");
+            }
+        } catch (DataAccessException e) {
+            dto.setCode(StatusCode.DB_ERROR);
+            dto.setMsg("服务端异常, 无法获取到相关数据");
         }
-        if (tips.size() == 0 || tips == null){
-            resp.setCode(500);
-            resp.setMsg("获取失败");
-        }else {
-            resp.setCode(200);
-            resp.setMsg("获取成功");
-            resp.setData(tips);
-        }
-        return resp;
+
+        return dto;
     }
 
-    public TipsResp getTipsById(int id){
-        TipsResp resp = new TipsResp();
-        ArrayList<TipsEntity> list = new ArrayList<>();
-        TipsEntity tip = null;
+    public BaseDto<TipsPo> getTipsById(int id) {
+        BaseDto<TipsPo> dto = new BaseDto<>();
         try {
-            tip = dao.getTipsById(id);
-            list.add(tip);
-            resp.setCode(200);
-            resp.setMsg("成功");
-            resp.setData(list);
-        } catch (Exception e) {
-            resp.setCode(500);
-            resp.setMsg("失败");
+            final TipsPo tips = dao.getTipsById(id);
+            dto.setCode(StatusCode.OK);
+            dto.setMsg("OK");
+            if (tips == null) {
+                dto.setMsg("未能获取到相关信息，该帖子可能已被删除");
+            }
+            dto.setData(tips);
+        } catch (DataAccessException e) {
+            dto.setCode(StatusCode.DB_ERROR);
+            dto.setMsg("服务端异常");
         }
-        return resp;
+        return dto;
     }
 
-    public TipsResp getHotTips(){
-        TipsResp resp = new TipsResp();
+    public BaseDto<List<TipsPo>> getHotTips() {
+        BaseDto<List<TipsPo>> dto = new BaseDto<>();
         try {
-            List<TipsEntity> tips = dao.getHotTips();
-            if (tips.size() != 0){
-                resp.setCode(200);
-                resp.setMsg("成功");
-                resp.setData(tips);
-            }else {
-                resp.setCode(500);
-                resp.setMsg("没有帖子");
+            List<TipsPo> tips = dao.getHotTips();
+            dto.setCode(StatusCode.OK);
+            dto.setMsg("OK");
+            dto.setData(tips);
+            if (tips.isEmpty()) {
+                dto.setMsg("未获取热贴");
             }
         } catch (Exception e) {
-            resp.setCode(500);
-            resp.setMsg("失败");
+            dto.setCode(StatusCode.DB_ERROR);
+            dto.setMsg("服务端异常，获取失败");
         }
-        return resp;
+        return dto;
     }
 }
