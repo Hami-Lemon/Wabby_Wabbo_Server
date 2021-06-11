@@ -11,7 +11,7 @@ import java.util.List;
  * @author Hami Lemon
  * @version v1.0
  */
-public interface ICommentDao {
+public interface ICommentsDao {
     /**
      * 添加评论
      *
@@ -50,5 +50,5 @@ public interface ICommentDao {
      */
     List<CommentsPo> getHotComments(int tipId);
 
-
+    void addStarNum(int id, int addNum);
 }

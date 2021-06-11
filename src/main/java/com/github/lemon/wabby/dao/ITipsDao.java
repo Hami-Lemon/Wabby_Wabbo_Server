@@ -61,4 +61,8 @@ public interface ITipsDao {
      */
 //    List<TipsEntity> getTipsOrderByStar();
     List<TipsPo> getHotTips();
+
+    void addStarNum(int id, int addNum);
+
+    List<TipsPo> searchTipsByContent(String content, int page);
 }

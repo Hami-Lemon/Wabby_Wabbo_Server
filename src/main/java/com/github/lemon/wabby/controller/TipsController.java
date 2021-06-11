@@ -15,7 +15,7 @@ import java.util.List;
  * @author Yui
  */
 @CrossOrigin(origins = "*", maxAge = 3600)
-@Controller
+@RestController
 public class TipsController {
 
     private final TipsService service;
@@ -51,7 +51,7 @@ public class TipsController {
     public @ResponseBody
     BaseDto<List<TipsPo>>
     getTips(@RequestParam("type") String type, @RequestParam("page") int page) {
-        return service.getTips(type,page);
+        return service.getTips(type, page);
     }
 
     /**
@@ -77,5 +77,21 @@ public class TipsController {
     public @ResponseBody
     BaseDto<List<TipsPo>> getHotTips() {
         return service.getHotTips();
+    }
+
+    @GetMapping(value = "/addtipsstarnum",
+            produces = "application/json;charset=UTF-8")
+    public @ResponseBody
+    BaseDto<Void> addStarNum(@RequestParam("id") int id,
+                             @RequestParam(name = "addNum", defaultValue = "1") int addNum) {
+        return service.addHotNum(id, addNum);
+    }
+
+    @GetMapping(value = "/searchtips",
+            produces = "application/json;charset=UTF-8")
+    public @ResponseBody
+    BaseDto<List<TipsPo>> searchTips(@RequestParam("content") String content,
+                                     @RequestParam(value = "page", defaultValue = "1") int page) {
+        return service.searchTips(content, page);
     }
 }

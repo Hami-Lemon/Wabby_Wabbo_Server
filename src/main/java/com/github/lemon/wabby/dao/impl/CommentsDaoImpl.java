@@ -1,6 +1,6 @@
 package com.github.lemon.wabby.dao.impl;
 
-import com.github.lemon.wabby.dao.ICommentDao;
+import com.github.lemon.wabby.dao.ICommentsDao;
 import com.github.lemon.wabby.pojo.CommentsPo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +16,7 @@ import java.util.List;
  * @version v1.0
  */
 @Repository
-public class CommentsDaoImpl implements ICommentDao {
+public class CommentsDaoImpl implements ICommentsDao {
     /**
      * jdbcTemplate
      *
@@ -45,7 +45,7 @@ public class CommentsDaoImpl implements ICommentDao {
                 commentsPo.getStarNum(),
                 commentsPo.getDate(),
                 commentsPo.getTipsId());
-        LOGGER.info("result:{}",result);
+        LOGGER.info("result:{}", result);
     }
 
     @Override
@@ -70,6 +70,12 @@ public class CommentsDaoImpl implements ICommentDao {
     public List<CommentsPo> getHotComments(int tipsId) {
         String sql = "select * from Comments where tips_id = ? order by starNum desc limit 3 ";
         return getCommentsList(sql, tipsId);
+    }
+
+    @Override
+    public void addStarNum(int id, int addNum) {
+        String sql = "update Comments set starNum = starNum + ? where id = ?";
+        template.update(sql, addNum, id);
     }
 
     private List<CommentsPo> getCommentsList(String sql, Object... args) {

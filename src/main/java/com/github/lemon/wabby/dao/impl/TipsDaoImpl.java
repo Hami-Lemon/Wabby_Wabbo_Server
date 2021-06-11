@@ -80,11 +80,26 @@ public class TipsDaoImpl implements ITipsDao {
         return getTipsList(sql);
     }
 
+    @Override
+    public void addStarNum(int id, int addNum) {
+        String sql = "update Tips set starNum = starNum + ? where id = ?";
+        template.update(sql, addNum, id);
+    }
+
+    @Override
+    public List<TipsPo> searchTipsByContent(String content, int page) {
+        String sql = "call search_tips_with_content(?,?,?)";
+        StringBuilder contentSb = new StringBuilder(content);
+        contentSb.insert(0, '%')
+                .append('%');
+        return getTipsList(sql, contentSb.toString(), page, pageSize);
+    }
+
     private List<TipsPo> getTipsList(String sql, Object... args) {
         List<TipsPo> list = template.query(sql,
                 new BeanPropertyRowMapper<>(TipsPo.class),
                 args);
-        LOGGER.info("query tipsList {}, args:{} result:{}",sql, args, list);
+        LOGGER.info("query tipsList {}, args:{} result:{}", sql, args, list);
         return list;
     }
 }

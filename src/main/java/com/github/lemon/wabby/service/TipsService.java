@@ -1,10 +1,16 @@
 package com.github.lemon.wabby.service;
 
+import com.baidu.aip.contentcensor.AipContentCensor;
+import com.github.benmanes.caffeine.cache.Cache;
 import com.github.lemon.wabby.dao.ITipsDao;
 import com.github.lemon.wabby.enums.StatusCode;
 import com.github.lemon.wabby.pojo.TipsPo;
 import com.github.lemon.wabby.pojo.dto.BaseDto;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -17,21 +23,66 @@ import java.util.List;
 public class TipsService {
 
     private final ITipsDao dao;
+    private final Cache<Integer, Integer> cache;
+    private final AipContentCensor censor;
 
     @Autowired
-    public TipsService(ITipsDao dao) {
+    public TipsService(ITipsDao dao,
+                       AipContentCensor censor,
+                       @Qualifier("tipsCache") Cache<Integer, Integer> cache) {
         this.dao = dao;
+        this.censor = censor;
+        this.cache = cache;
     }
 
     public BaseDto<Void> postTips(TipsPo tip) {
         BaseDto<Void> dto = new BaseDto<>();
         try {
-            dao.releaseTips(tip);
-            dto.setCode(StatusCode.OK);
-            dto.setMsg("OK");
+            JSONObject response =
+                    censor.textCensorUserDefined(tip.getContent());
+            if (response.getInt("conclusionType") == 1) {
+                dao.releaseTips(tip);
+                dto.setCode(StatusCode.OK);
+                dto.setMsg("OK");
+            } else {
+                StringBuilder msg = new StringBuilder("存在");
+                JSONArray data = response.getJSONArray("data");
+
+                for (int i = 0; i < data.length(); i++) {
+                    JSONObject d = data.getJSONObject(i);
+                    if (d.getInt("type") == 12) {
+                        switch (d.getInt("subType")) {
+                            case 0:
+                                msg.append("-低质灌水-");
+                                break;
+                            case 1:
+                                msg.append("-暴恐违禁-");
+                                break;
+                            case 2:
+                                msg.append("-文本色情-");
+                                break;
+                            case 3:
+                                msg.append("-政治敏感-");
+                                break;
+                            case 4:
+                                msg.append("-恶意推广-");
+                                break;
+                            case 5:
+                                msg.append("-低俗辱骂-");
+                                break;
+                        }
+                    }
+                }
+                msg.append("不合规内容，请修改后重试");
+                dto.setCode(StatusCode.SERVER_ERROR);
+                dto.setMsg(msg.toString());
+            }
         } catch (DataAccessException e) {
             dto.setCode(StatusCode.DB_ERROR);
             dto.setMsg("服务端异常，发布失败！");
+        } catch (JSONException e) {
+            dto.setCode(StatusCode.SERVER_ERROR);
+            dto.setMsg("发布失败");
         }
         return dto;
     }
@@ -41,6 +92,8 @@ public class TipsService {
         List<TipsPo> tips;
         try {
             tips = dao.getTipsByType(type, page);
+            tips.forEach(this::judgeStarNum);
+
             dto.setCode(StatusCode.OK);
             dto.setMsg("OK");
             dto.setData(tips);
@@ -59,12 +112,15 @@ public class TipsService {
         BaseDto<TipsPo> dto = new BaseDto<>();
         try {
             final TipsPo tips = dao.getTipsById(id);
+
             dto.setCode(StatusCode.OK);
             dto.setMsg("OK");
             if (tips == null) {
                 dto.setMsg("未能获取到相关信息，该帖子可能已被删除");
+            } else {
+                judgeStarNum(tips);
+                dto.setData(tips);
             }
-            dto.setData(tips);
         } catch (DataAccessException e) {
             dto.setCode(StatusCode.DB_ERROR);
             dto.setMsg("服务端异常");
@@ -88,4 +144,41 @@ public class TipsService {
         }
         return dto;
     }
+
+    public BaseDto<Void> addHotNum(int id, int addNum) {
+        BaseDto<Void> dto = new BaseDto<>();
+        Integer additionHotNum = cache.getIfPresent(id);
+        int additional = additionHotNum == null ? 0 : additionHotNum;
+        cache.put(id, additional + addNum);
+        dto.setCode(StatusCode.OK);
+        dto.setMsg("OK");
+        return dto;
+    }
+
+    public BaseDto<List<TipsPo>> searchTips(String content, int page) {
+        BaseDto<List<TipsPo>> dto = new BaseDto<>();
+        try {
+            final List<TipsPo> tips = dao.searchTipsByContent(content, page);
+            tips.forEach(this::judgeStarNum);
+
+            dto.setCode(StatusCode.OK);
+            dto.setMsg("OK");
+            dto.setData(tips);
+            if (tips.isEmpty()) {
+                dto.setMsg("无相关内容");
+            }
+        } catch (DataAccessException e) {
+            dto.setCode(StatusCode.DB_ERROR);
+            dto.setMsg("error");
+        }
+        return dto;
+    }
+
+    private void judgeStarNum(TipsPo tips) {
+        Integer additionStarNum = cache.getIfPresent(tips.getId());
+        int additional = additionStarNum == null ? 0 : additionStarNum;
+        int oldStarNum = tips.getStarNum();
+        tips.setStarNum(oldStarNum + additional);
+    }
+
 }

@@ -65,4 +65,12 @@ public class CommentController {
     BaseDto<List<CommentsPo>> getHotCom(@RequestParam("tid") int tid) {
         return service.getHotCom(tid);
     }
+
+    @GetMapping(value = "/addcommentsstarnum",
+            produces = "application/json;charset=UTF-8")
+    public @ResponseBody
+    BaseDto<Void> addStarNum(@RequestParam("id") int id,
+                             @RequestParam(name = "addNum", defaultValue = "1") int addNum) {
+        return service.addHotNum(id, addNum);
+    }
 }
