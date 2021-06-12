@@ -14,7 +14,6 @@ import java.util.List;
  *
  * @author Yui
  */
-@CrossOrigin(origins = "*", maxAge = 3600)
 @Controller
 public class CommentController {
 

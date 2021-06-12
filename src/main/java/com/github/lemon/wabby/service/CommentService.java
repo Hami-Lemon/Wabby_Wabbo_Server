@@ -1,7 +1,6 @@
 package com.github.lemon.wabby.service;
 
 import com.baidu.aip.contentcensor.AipContentCensor;
-import com.github.benmanes.caffeine.cache.Cache;
 import com.github.lemon.wabby.dao.ICommentsDao;
 import com.github.lemon.wabby.enums.StatusCode;
 import com.github.lemon.wabby.pojo.CommentsPo;
@@ -27,15 +26,12 @@ public class CommentService {
     private final static Logger LOGGER = LoggerFactory.getLogger(CommentService.class);
     private final ICommentsDao dao;
     private final AipContentCensor censor;
-    private final Cache<Integer, Integer> cache;
 
     @Autowired
     public CommentService(ICommentsDao dao,
-                          AipContentCensor censor,
-                          @Qualifier("commentsCache") Cache<Integer, Integer> cache) {
+                          AipContentCensor censor) {
         this.dao = dao;
         this.censor = censor;
-        this.cache = cache;
     }
 
 
@@ -95,7 +91,7 @@ public class CommentService {
         BaseDto<List<CommentsPo>> dto = new BaseDto<>();
         try {
             final List<CommentsPo> comments = dao.getCommentsByTipsId(tid, page);
-            comments.forEach(this::judgeStarNum);
+
             dto.setCode(StatusCode.OK);
             dto.setMsg("OK");
             dto.setData(comments);
@@ -128,18 +124,10 @@ public class CommentService {
 
     public BaseDto<Void> addHotNum(int id, int addNum) {
         BaseDto<Void> dto = new BaseDto<>();
-        Integer additionHotNum = cache.getIfPresent(id);
-        int additional = additionHotNum == null ? 0 : additionHotNum;
-        cache.put(id, additional + addNum);
+        dao.addStarNum(id, addNum);
         dto.setCode(StatusCode.OK);
         dto.setMsg("OK");
         return dto;
     }
 
-    private void judgeStarNum(CommentsPo commentsPo) {
-        Integer additionStarNum = cache.getIfPresent(commentsPo.getId());
-        int additional = additionStarNum == null ? 0 : additionStarNum;
-        int oldStarNum = commentsPo.getStarNum();
-        commentsPo.setStarNum(oldStarNum + additional);
-    }
 }

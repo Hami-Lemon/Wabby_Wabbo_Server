@@ -4,9 +4,9 @@
     <Properties>
         <!--日志输出的文件夹-->
         <!--tomcat目录/bin/logs-->
-        <!--<Property name="log.folder">
+        <Property name="log.folder">
             logs
-        </Property>-->
+        </Property>
     </Properties>
     <Appenders>
         <!--输出到控制台-->
@@ -14,33 +14,27 @@
             <!--时间 [线程名] 日志级别 logger名称 > 输出信息\n-->
             <PatternLayout charset="UTF-8" pattern="%d{MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{12} > %msg%n"/>
         </Console>
-        <!--输出info日志到${log.folder}/info.log-->
-        <!--<RollingFile name="InfoRollingFile" fileName="${log.folder}/info.log"
+<!--        输出info日志到${log.folder}/info.log-->
+        <RollingFile name="InfoRollingFile" fileName="${log.folder}/info.log"
                      filePattern="${log.folder}/info-%d{yyyy-MM-dd}-%i.log">
             <PatternLayout pattern="%d{MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{12} > %msg%n"/>
             <Filters>
-                &lt;!&ndash;只输出info级别的日志&ndash;&gt;
+                <!--只输出info级别的日志-->
                 <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
             </Filters>
             <Policies>
-                &lt;!&ndash;基于时间滚动&ndash;&gt;
+                <!--基于时间滚动-->
                 <TimeBasedTriggeringPolicy/>
-                &lt;!&ndash;单文件最大大小为10MB&ndash;&gt;
+                <!--单文件最大大小为10MB-->
                 <SizeBasedTriggeringPolicy size="10 MB"/>
             </Policies>
-        </RollingFile>-->
+        </RollingFile>
 
     </Appenders>
     <Loggers>
-        <!--不输出spring日志-->
-        <!--        <Logger name="org.springframework" level="debug" additivity="false">-->
-        <!--        </Logger>-->
-        <Logger name="com.mchange" level="debug" additivity="false">
-
-        </Logger>
         <Root level="info">
             <AppenderRef ref="Console"/>
-            <!--            <AppenderRef ref="InfoRollingFile"/>-->
+            <AppenderRef ref="InfoRollingFile"/>
         </Root>
     </Loggers>
 </Configuration>

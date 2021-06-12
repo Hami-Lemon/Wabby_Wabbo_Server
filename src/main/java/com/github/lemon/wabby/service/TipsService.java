@@ -1,7 +1,6 @@
 package com.github.lemon.wabby.service;
 
 import com.baidu.aip.contentcensor.AipContentCensor;
-import com.github.benmanes.caffeine.cache.Cache;
 import com.github.lemon.wabby.dao.ITipsDao;
 import com.github.lemon.wabby.enums.StatusCode;
 import com.github.lemon.wabby.pojo.TipsPo;
@@ -10,7 +9,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -23,16 +21,13 @@ import java.util.List;
 public class TipsService {
 
     private final ITipsDao dao;
-    private final Cache<Integer, Integer> cache;
     private final AipContentCensor censor;
 
     @Autowired
     public TipsService(ITipsDao dao,
-                       AipContentCensor censor,
-                       @Qualifier("tipsCache") Cache<Integer, Integer> cache) {
+                       AipContentCensor censor) {
         this.dao = dao;
         this.censor = censor;
-        this.cache = cache;
     }
 
     public BaseDto<Void> postTips(TipsPo tip) {
@@ -92,7 +87,6 @@ public class TipsService {
         List<TipsPo> tips;
         try {
             tips = dao.getTipsByType(type, page);
-            tips.forEach(this::judgeStarNum);
 
             dto.setCode(StatusCode.OK);
             dto.setMsg("OK");
@@ -118,7 +112,6 @@ public class TipsService {
             if (tips == null) {
                 dto.setMsg("未能获取到相关信息，该帖子可能已被删除");
             } else {
-                judgeStarNum(tips);
                 dto.setData(tips);
             }
         } catch (DataAccessException e) {
@@ -147,9 +140,7 @@ public class TipsService {
 
     public BaseDto<Void> addHotNum(int id, int addNum) {
         BaseDto<Void> dto = new BaseDto<>();
-        Integer additionHotNum = cache.getIfPresent(id);
-        int additional = additionHotNum == null ? 0 : additionHotNum;
-        cache.put(id, additional + addNum);
+       dao.addStarNum(id, addNum);
         dto.setCode(StatusCode.OK);
         dto.setMsg("OK");
         return dto;
@@ -159,7 +150,6 @@ public class TipsService {
         BaseDto<List<TipsPo>> dto = new BaseDto<>();
         try {
             final List<TipsPo> tips = dao.searchTipsByContent(content, page);
-            tips.forEach(this::judgeStarNum);
 
             dto.setCode(StatusCode.OK);
             dto.setMsg("OK");
@@ -174,11 +164,19 @@ public class TipsService {
         return dto;
     }
 
-    private void judgeStarNum(TipsPo tips) {
-        Integer additionStarNum = cache.getIfPresent(tips.getId());
-        int additional = additionStarNum == null ? 0 : additionStarNum;
-        int oldStarNum = tips.getStarNum();
-        tips.setStarNum(oldStarNum + additional);
+    public BaseDto<Integer> getPageNum(String type) {
+        BaseDto<Integer> dto = new BaseDto<>();
+        try {
+
+            final int pageNum = dao.getPageNum(type);
+            dto.setCode(StatusCode.OK);
+            dto.setMsg("OK");
+            dto.setData(pageNum);
+        } catch (DataAccessException e) {
+            dto.setCode(StatusCode.DB_ERROR);
+            dto.setMsg("error");
+        }
+        return dto;
     }
 
 }

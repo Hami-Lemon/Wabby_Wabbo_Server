@@ -14,7 +14,6 @@ import java.util.List;
  *
  * @author Yui
  */
-@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 public class TipsController {
 
@@ -93,5 +92,11 @@ public class TipsController {
     BaseDto<List<TipsPo>> searchTips(@RequestParam("content") String content,
                                      @RequestParam(value = "page", defaultValue = "1") int page) {
         return service.searchTips(content, page);
+    }
+
+    @GetMapping(value = "/getpagenum",
+            produces = "application/json;charset=UTF-8")
+    BaseDto<Integer> getPageNum(@RequestParam("type") String type) {
+        return service.getPageNum(type);
     }
 }
