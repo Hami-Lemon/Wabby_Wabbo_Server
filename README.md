@@ -137,3 +137,35 @@
 }
 ```
 
+#### 搜索帖子(Get）—— url "/searchtips?content=&page="
+
+通过关键词字符串匹配搜索帖子
+
+```json
+响应
+{
+    "code": 状态码(int),
+    "msg": 错误信息(String),
+}
+```
+
+#### 增加帖子热度(Get）—— url "/addtipsstarnum?id=&addNum="
+
+```json
+响应
+{
+    "code": 状态码(int),
+    "msg": 错误信息(String),
+}
+```
+
+#### 增加评论热度(Get）—— url "/addcommentsstarnum?id=&addNum="
+
+```json
+响应
+{
+    "code": 状态码(int),
+    "msg": 错误信息(String),
+}
+```
+

@@ -1,7 +1,6 @@
 package com.github.lemon.dao;
 
 import com.github.lemon.example.Comments;
-import com.github.lemon.example.Tips;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayListHandler;
 import org.springframework.beans.factory.annotation.Autowired;
