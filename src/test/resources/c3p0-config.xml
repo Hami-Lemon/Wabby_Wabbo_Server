@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8" ?>
 <c3p0-config>
     <!--默认配置-->
     <default-config>
@@ -8,15 +7,10 @@
         <property name="user">root</property>
         <property name="password">root</property>
         <!--连接池配置-->
-        <!--初始时创建的链接数-->
         <property name="initialPoolSize">10</property>
-        <!--最大空闲时间，超过该时间时，断开链接，为0时永不断开-->
         <property name="maxIdleTime">30</property>
-        <!--最大链接数-->
         <property name="maxPoolSize">20</property>
-        <!--最小链接数-->
         <property name="minPoolSize">5</property>
-        <!--控制 PreparedStatements 的数量-->
         <property name="maxStatements">200</property>
     </default-config>
 </c3p0-config>

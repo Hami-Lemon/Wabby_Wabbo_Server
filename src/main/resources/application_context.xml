@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx.xsd">
+    <!--读取文本审核的配置文件-->
+    <!--如需使用，请自行配置-->
+    <!--https://ai.baidu.com/ai-doc/ANTIPORN/6ki012lqu-->
+    <context:property-placeholder location="classpath:censor.properties"/>
+
+    <context:component-scan base-package="com.github.lemon.wabby">
+        <!--不扫描 Controller-->
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+    <!--数据库链接池，使用c3p0 配置文件为c3p0-config.xml-->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"
+          destroy-method="close">
+    </bean>
+    <!--使用jdbcTemplate操作数据库-->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <constructor-arg name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!--百度的文本审核api,如需使用，请先配置censor.properties-->
+    <bean id="aipContentCensor" class="com.baidu.aip.contentcensor.AipContentCensor">
+        <constructor-arg name="appId" value="${appId}"/>
+        <constructor-arg name="aipKey" value="${aipKey}"/>
+        <constructor-arg name="aipToken" value="${aipToken}"/>
+        <property name="connectionTimeoutInMillis" value="2000"/>
+        <property name="socketTimeoutInMillis" value="6000"/>
+    </bean>
+
+    <!--事务控制-->
+    <bean id="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <!--被控制的数据源-->
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <aop:config>
+        <!--切入点表达式-->
+        <aop:pointcut id="txPoint" expression="execution(* com.github.lemon.wabby.service..*(..))"/>
+        <!--配置事务增强-->
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="txPoint"/>
+    </aop:config>
+
+    <!--配置事务增强-->
+    <tx:advice id="txAdvice">
+        <tx:attributes>
+            <tx:method name="*"/>
+            <tx:method name="get*" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
+</beans>
