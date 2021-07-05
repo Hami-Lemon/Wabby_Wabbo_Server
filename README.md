@@ -1,11 +1,10 @@
-## 匿名论坛主要功能
+# 歪比巴卜论坛
 
-1. 发布
-2. 评论
-3. 分类
-4. 热帖推荐（点赞、评论数）
-5. 热评推荐（点赞数）
-6. 文本审查（阿里云API服务）
+这是我们一个软件工程的实验作业，如果你有兴趣，可以来逛一逛 ：[歪比巴卜论坛](http://39.107.39.204)
+
+这个仓库是歪比巴卜论坛的后端仓库，目前的后端很简单，只能说勉强能用。
+
+前端仓库：[github](https://github.com/Hami-Lemon/Wabby_Wabbo_UI)
 
 ## 数据库设计
 
@@ -13,9 +12,9 @@
 
 ### Tips表
 
-|    id    |       date        |     type     |  starNum   |  content  |
-| :------: | :---------------: | :----------: | :--------: | :-------: |
-| int 主键 | datetime 发贴日期 | varchar 分类 | int 点赞数 | text 内容 |
+|   id    |       date        |     type     |  starNum   |  content  |
+| :-----: | :---------------: | :----------: | :--------: | :-------: |
+| int主键 | datetime 发贴日期 | varchar 分类 | int 点赞数 | text 内容 |
 
 ### Comment表
 
@@ -23,25 +22,36 @@
 | :------: | :-------: | :-------: | :---------------: | :-------------------: |
 | int 主键 | text 内容 | int点赞数 | datetime 发布日期 | int 所属帖子的id,外键 |
 
-## 后端接口
+## 接口约定
 
-### JSON格式约定
+前后端分离，以json方式交互
 
-#### 发布(Post) —— `url “/posttips”`
+#### 发布(Post) —— `url： “/posttips”`
 
-```json
-请求
-{
-    "data": {
-        //(Tips对象)
-    }
-}
-响应
-{
-    "code": "状态码(int)",
-    "msg": "错误信息(String)"
-}
-```
+- request
+
+  ```json
+  {
+      "data": {
+          "id": 1,
+          "data": "2021-07-01 12:00:00",
+          "type": "学习",
+          "starNum": 100,
+          "content": "内容"
+      }
+  }
+  ```
+
+- response
+
+  ```json
+  {
+      "code": "200",
+      "msg": "错误信息(String),code为200时操作成功"
+  }
+  ```
+
+  
 
 #### 获取帖子(Get) —— `url "/gettips?type=xxx&page=xx"`
 
@@ -52,8 +62,9 @@
 - type为帖子类型
 - page为页数，持久层采用分页查询的方式
 
+response
+
 ```json
-响应
 {
     "code": "状态码(int)",
     "msg": "错误信息(String)",
@@ -71,8 +82,9 @@
 
 - id: 对应帖子的id
 
+response
+
 ```json
-响应
 {
     "code": "状态码(int)",
     "msg": "错误信息(String)",
@@ -84,19 +96,26 @@
 
 #### 发布评论(Post) —— `url "/postcomment"`
 
-```json
-请求
-{
-    "data": {
-       // (Comment对象)
-	}
-}
-响应
-{
-    "code": "状态码(int)",
-    "msg": "错误信息(String)"
-}
-```
+- request
+
+  ```json
+  {
+    "id": 1,
+    "content": "评论内容",
+    "starNum": 20,
+    "date": "2021-03-04 12:32:32",
+    "tipsId": 25
+  }
+  ```
+
+- response
+
+  ```json
+  {
+      "code": "状态码(int)",
+      "msg": "错误信息(String)"
+  }
+  ```
 
 #### 获取评论(Get) —— `url "/getcomment?tid=xxx&page=xx"`
 
@@ -107,8 +126,9 @@
 - `tid`: 评论所属帖子的id， 因为是获取到一个帖子下的评论
 - `page`: 页数，同样采用分布查询的方式
 
+response
+
 ```json
-响应
 {
     "code": "状态码(int)",
     "msg": "错误信息(String)",
@@ -122,8 +142,11 @@
 
 #### 获取热帖推荐(Get) —— `url "/gethottips"`
 
+按照点赞数多少进行排序
+
+response
+
 ```json
-响应
 {
     "code": "状态码(int)",
     "msg": "错误信息(String)",
@@ -132,7 +155,6 @@
         //(Tips对象),
         //...
     ]
-    上述Tips对象，为点赞数和评论数综合后降序排列(前10)
 }
 ```
 
@@ -144,8 +166,9 @@
 
 - `tid`: 评论所属帖子的id， 因为是获取到一个帖子下面评论中的热评
 
+response
+
 ```json
-响应
 {
     "code": "状态码(int)",
     "msg": "错误信息(String)",
@@ -156,4 +179,3 @@
     ]
 }
 ```
-
