@@ -8,7 +8,9 @@
 
 ## 数据库设计
 
-建表文件为`build.sql`建议一条一条地执行里面的语句， `data.sql`中有用于测试的数据
+建表文件为`build.sql`， `data.sql`中有用于测试的数据
+
+数据库使用的是`Mysql`，如果你城需要使用其它的数据库，需要自己修改`build.sql`中的建表语句，以及`c3p0-config.xml`中的链接池配置
 
 ### Tips表
 
@@ -51,7 +53,6 @@
   }
   ```
 
-  
 
 #### 获取帖子(Get) —— `url "/gettips?type=xxx&page=xx"`
 
@@ -177,5 +178,71 @@ response
         //(Comment对象),
         //...
     ]
+}
+```
+
+#### 搜索帖子(Get）—— `url "/searchtips?content=&page="`
+
+通过关键词字符串匹配搜索帖子
+
+参数说明：
+
+- content: 搜索的内容
+- page：页数，默认为1
+
+response
+
+```json
+{
+    "code": 状态码(int),
+    "msg": 错误信息(String),
+}
+```
+
+#### 增加帖子热度(Get）—— `url "/addtipsstarnum?id=&addNum="`
+
+参数说明：
+
+- id: 对应帖子的id
+- addNum: 点赞数
+
+response
+
+```json
+{
+    "code": 状态码(int),
+    "msg": 错误信息(String),
+}
+```
+
+#### 增加评论热度(Get）—— `url "/addcommentsstarnum?id=&addNum="`
+
+参数说明：
+
+- id: 对应评论的id
+- addNum: 点赞数
+
+response
+
+```json
+{
+    "code": 状态码(int),
+    "msg": 错误信息(String),
+}
+```
+
+#### 获取总页数（Get) -- `url "/getpagenum?type=xxx"`
+
+参数说明：
+
+- type: 帖子的类型
+
+response
+
+```json
+{
+    "code":200,
+    "msg":"OK",
+    "data":3
 }
 ```
