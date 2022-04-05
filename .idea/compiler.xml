@@ -9,6 +9,8 @@
         <module name="Wabby_Wabbo_Server" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="11" />
+    <bytecodeTargetLevel target="17">
+      <module name="cache2j" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>

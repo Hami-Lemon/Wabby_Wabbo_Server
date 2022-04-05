@@ -140,7 +140,7 @@ public class TipsService {
 
     public BaseDto<Void> addHotNum(int id, int addNum) {
         BaseDto<Void> dto = new BaseDto<>();
-       dao.addStarNum(id, addNum);
+        dao.addStarNum(id, addNum);
         dto.setCode(StatusCode.OK);
         dto.setMsg("OK");
         return dto;

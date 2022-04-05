@@ -1,5 +1,7 @@
 package com.github.lemon.wabby.dao.impl;
 
+import com.github.lemon.cache.Cache;
+import com.github.lemon.cache.CacheTable;
 import com.github.lemon.wabby.dao.ITipsDao;
 import com.github.lemon.wabby.pojo.TipsPo;
 import org.slf4j.Logger;
@@ -18,6 +20,9 @@ import java.util.List;
 @Repository
 public class TipsDaoImpl implements ITipsDao {
     private final static Logger LOGGER = LoggerFactory.getLogger(TipsDaoImpl.class);
+
+    private final CacheTable<Integer, TipsPo> cache = Cache.Allocate("tips");
+
     /**
      * 分页之后,每页的帖子数
      */
@@ -66,10 +71,16 @@ public class TipsDaoImpl implements ITipsDao {
 
     //根据id获取帖子
     public TipsPo getTipsById(int id) {
+        //尝试从缓存中读取
+        TipsPo tips = cache.get(id);
+        if (tips != null) {
+            return tips;
+        }
         String sql = "select * from Tips where id = ? ";
-        TipsPo tips = template.queryForObject(sql,
+        tips = template.queryForObject(sql,
                 new BeanPropertyRowMapper<>(TipsPo.class),
                 id);
+        cache.put(id, tips);
         LOGGER.info("query tips by id {} id:{} tips:{}", sql, id, tips);
         return tips;
     }
@@ -99,6 +110,7 @@ public class TipsDaoImpl implements ITipsDao {
         List<TipsPo> list = template.query(sql,
                 new BeanPropertyRowMapper<>(TipsPo.class),
                 args);
+        list.forEach(tipsPo -> cache.put(tipsPo.getId(), tipsPo));
         LOGGER.info("query tipsList {}, args:{} result:{}", sql, args, list);
         return list;
     }
